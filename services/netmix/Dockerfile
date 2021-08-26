@@ -82,10 +82,20 @@ RUN chmod -v +x /etc/cont-init.d/* /etc/services.d/* \
 
 # 修改ssh配置
 && sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config && \
+   #sed -i "s/HostKey :/#HostKey :/g" /etc/ssh/sshd_config && \
    ssh-keygen -t dsa -P "" -f /etc/ssh/ssh_host_dsa_key && \
    ssh-keygen -t rsa -P "" -f /etc/ssh/ssh_host_rsa_key && \
    ssh-keygen -t ecdsa -P "" -f /etc/ssh/ssh_host_ecdsa_key && \
    ssh-keygen -t ed25519 -P "" -f /etc/ssh/ssh_host_ed25519_key && \
+   sed -i "s/#HostKey/HostKey/g" /etc/ssh/sshd_config && \
+   sed -i "s/#PasswordAuthentication/PasswordAuthentication/g" /etc/ssh/sshd_config && \
+   sed -i "s/#ChallengeResponseAuthentication */ChallengeResponseAuthentication no/g" /etc/ssh/sshd_config && \
+   sed -i "s/#GSSAPIAuthentication */GSSAPIAuthentication yes/g" /etc/ssh/sshd_config && \
+   sed -i "s/#GSSAPICleanupCredentials */GSSAPICleanupCredentials no/g" /etc/ssh/sshd_config && \
+   sed -i "s/#UsePAM */UsePAM yes/g" /etc/ssh/sshd_config && \
+   sed -i "s/AllowTcpForwarding */#AllowTcpForwarding yes/g" /etc/ssh/sshd_config && \
+   sed -i "s/GatewayPorts */#GatewayPorts no/g" /etc/ssh/sshd_config && \
+   sed -i "s/X11Forwarding */X11Forwarding yes/g" /etc/ssh/sshd_config && \
    # 修改root密码为123456
    echo "root:123456" | chpasswd
 
