@@ -16,7 +16,7 @@ WORKDIR /tmp
 COPY ./package/* ./
 
 # 更新为国内镜像
-RUN if [ $CONTAINER_PACKAGE_URL ] ; then sed -i "s/dl-cdn.alpinelinux.org/${CONTAINER_PACKAGE_URL}/g" /etc/apk/repositories ; fi
+RUN if [ $CONTAINER_PACKAGE_URL ]; then sed -i "s/dl-cdn.alpinelinux.org/${CONTAINER_PACKAGE_URL}/g" /etc/apk/repositories; fi
 
 # 安装编译工具
 RUN apk add --no-cache g++ gcc make \
@@ -38,10 +38,19 @@ ARG COMPOSER_MIRRORS_URL=mirrors.aliyun.com
 MAINTAINER <Jueluo> "chaoyue@live.com"
 
 # 更新为国内镜像
-RUN if [ $CONTAINER_PACKAGE_URL ] ; then sed -i "s/dl-cdn.alpinelinux.org/${CONTAINER_PACKAGE_URL}/g" /etc/apk/repositories ; fi \
+RUN if [ $CONTAINER_PACKAGE_URL ]; then sed -i "s/dl-cdn.alpinelinux.org/${CONTAINER_PACKAGE_URL}/g" /etc/apk/repositories; fi \
 
 # 安装bash、vim、telnet、tzdata等开发工具
 && apk add --update --no-cache bash vim busybox-extras tzdata curl \
+
+# 安装常用工具
+&& apk add --update --no-cache iftop iotop tcpdump tcpflow mysql-client \
+
+# 安装开发工具
+&& apk add --update --no-cache nginx php7 \
+
+# 安装php扩展
+&& apk add php7-mysqli php7-pdo_mysql php7-mbstring php7-json php7-zlib php7-gd php7-intl php7-session php7-fpm php7-bcmath php7-xml php7-zip \
 
 # 安装openvpn、ssh
 && apk add --update --no-cache openvpn openssh \
