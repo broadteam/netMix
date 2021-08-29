@@ -1,15 +1,18 @@
 version: "3"
 
 services:
-    latest:
+    netmix:
         build:
             # 从根目录下的nginx文件夹下构建
             context: ./services/netmix
             args:
                 TIME_ZONE: ${TIME_ZONE}
                 CONTAINER_PACKAGE_URL: ${CONTAINER_PACKAGE_URL}
+        # 镜像名称
+        image: "teng315/${NETMIX_CONTAINER_NAME}:1.0"
         # 容器名称
         container_name: "${NETMIX_CONTAINER_NAME}"
+        # 主机名称
         hostname: "${NETMIX_CONTAINER_NAME}"
         ports:
             - "8080:80"

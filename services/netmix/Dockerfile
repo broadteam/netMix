@@ -56,13 +56,13 @@ RUN if [ $CONTAINER_PACKAGE_URL ]; then sed -i "s/dl-cdn.alpinelinux.org/${CONTA
 && apk add --update --no-cache openvpn openssh \
 
 # 清除缓存
-&& rm -rf /var/cache/apk* \
+#&& rm -rf /var/cache/apk* \
 
 # 设置时区
 && echo "${TIME_ZONE}" > /etc/timezone \
 
 # 对时区文件建立软链接
-&& ln -sf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime
+&& ln -sf /usr/share/zoneinfo/Asia/Shangha /etc/localtime
 
 # 从编译阶段的中拷贝编译结果到当前镜像中
 COPY --from=build_env /usr/local/bin/tinyproxy /usr/local/bin/tinyproxy
