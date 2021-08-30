@@ -2,24 +2,13 @@ version: "3"
 
 services:
     netmix:
-        build:
-            # 从根目录下的nginx文件夹下构建
-            context: ./services/netmix
-            args:
-                TIME_ZONE: ${TIME_ZONE}
-                CONTAINER_PACKAGE_URL: ${CONTAINER_PACKAGE_URL}
-        # 镜像名称
-        image: "teng315/${NETMIX_CONTAINER_NAME}:1.0"
-        # 容器名称
-        container_name: "${NETMIX_CONTAINER_NAME}"
-        # 主机名称
-        hostname: "${NETMIX_CONTAINER_NAME}"
+        image: "teng315/netmix:1.0"
+        hostname: "netmix"
         ports:
             - "8080:80"
             - "2222:22"
             - "8888:8888"
         volumes:
-            # 挂载配置至容器
             - ./volumes/netmix/config/tinyproxy.conf:/etc/tinyproxy/tinyproxy.conf:rw
             - ./volumes/netmix/config/sshd_config:/etc/ssh/sshd_config:rw
             - ./volumes/netmix/config/openvpn.conf:/etc/openvpn/client.conf:rw
@@ -28,8 +17,6 @@ services:
             - ./volumes/netmix/ntunnel_mysql.php:/home/www/ntunnel_mysql.php:rw
         environment:
             TIME_ZONE: "TIME_ZONE"
-        # 是否特权用户运行，容器的权限设置（privileged/cap-add/cap-drop）
-        #privileged: true
         cap_add:
             - NET_ADMIN
         restart: always
@@ -38,20 +25,10 @@ services:
         networks:
             - default
             - dev-network
-            #- dev-net:
-            #      ipv4_address: 172.10.1.1
 networks:
     default:
     dev-network:
-        #external: true
         driver: bridge
         ipam:
             config:
-                # 子网络
                 - subnet: ${NETWORK_SEGMENT}
-    #dwnet:
-    #    driver: bridge
-    #    ipam:
-    #        driver: default
-    #        config:
-    #            - subnet: 172.10.1.93/24
