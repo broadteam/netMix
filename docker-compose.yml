@@ -21,7 +21,6 @@ services:
         volumes:
             # 挂载配置至容器
             - ./volumes/netmix/config/tinyproxy.conf:/etc/tinyproxy/tinyproxy.conf:rw
-            - ./volumes/netmix/config/sshd_config:/etc/ssh/sshd_config:rw
             - ./volumes/netmix/config/openvpn.conf:/etc/openvpn/client.conf:rw
             - ./volumes/netmix/config/nginx-web.conf:/etc/nginx/conf.d/default.conf:rw
             - ./volumes/netmix/index.php:/home/www/index.php:rw
