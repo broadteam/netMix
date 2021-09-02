@@ -1,5 +1,5 @@
 # [构建第一阶段]
-FROM daocloud.io/library/alpine:3.12 AS build_env
+FROM daocloud.io/library/alpine:3.8 AS build_env
 
 # 只对当前FROM中管用（如果存在.env就用.env中的，否则就用当前）
 ARG CONTAINER_PACKAGE_URL=mirrors.ustc.edu.cn
@@ -24,7 +24,7 @@ RUN apk add --no-cache g++ gcc make \
     && ./configure && make && make install
 
 # [构建第二阶段]
-FROM daocloud.io/library/alpine:3.12
+FROM daocloud.io/library/alpine:3.8
 
 # 只对当前FROM中管用（如果存在.env就用.env中的，否则就用当前）
 ARG CONTAINER_PACKAGE_URL=mirrors.ustc.edu.cn
@@ -53,7 +53,7 @@ RUN if [ $CONTAINER_PACKAGE_URL ]; then sed -i "s/dl-cdn.alpinelinux.org/${CONTA
 && apk add php7-mysqli php7-pdo_mysql php7-mbstring php7-json php7-zlib php7-gd php7-intl php7-session php7-fpm php7-bcmath php7-xml php7-zip \
 
 # 安装openvpn、ssh
-&& apk add --update --no-cache openvpn openssh \
+&& apk add --update --no-cache openvpn openssh openrc \
 
 # 清除缓存
 #&& rm -rf /var/cache/apk* \
@@ -90,23 +90,10 @@ RUN chmod -v +x /etc/cont-init.d/* /etc/services.d/* \
 && sed -i "s/#BasicAuth user password/BasicAuth root 123456/g" /etc/tinyproxy/tinyproxy.conf \
 
 # 修改ssh配置
-&& sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config && \
-   #sed -i "s/HostKey :/#HostKey :/g" /etc/ssh/sshd_config && \
-   ssh-keygen -t dsa -P "" -f /etc/ssh/ssh_host_dsa_key && \
-   ssh-keygen -t rsa -P "" -f /etc/ssh/ssh_host_rsa_key && \
-   ssh-keygen -t ecdsa -P "" -f /etc/ssh/ssh_host_ecdsa_key && \
-   ssh-keygen -t ed25519 -P "" -f /etc/ssh/ssh_host_ed25519_key && \
-   sed -i "s/#HostKey/HostKey/g" /etc/ssh/sshd_config && \
-   sed -i "s/#PasswordAuthentication/PasswordAuthentication/g" /etc/ssh/sshd_config && \
-   sed -i "s/#ChallengeResponseAuthentication */ChallengeResponseAuthentication no/g" /etc/ssh/sshd_config && \
-   sed -i "s/#GSSAPIAuthentication */GSSAPIAuthentication yes/g" /etc/ssh/sshd_config && \
-   sed -i "s/#GSSAPICleanupCredentials */GSSAPICleanupCredentials no/g" /etc/ssh/sshd_config && \
-   sed -i "s/#UsePAM */UsePAM yes/g" /etc/ssh/sshd_config && \
-   sed -i "s/AllowTcpForwarding */#AllowTcpForwarding yes/g" /etc/ssh/sshd_config && \
-   sed -i "s/GatewayPorts */#GatewayPorts no/g" /etc/ssh/sshd_config && \
-   sed -i "s/X11Forwarding */X11Forwarding yes/g" /etc/ssh/sshd_config && \
-   # 修改root密码为123456
-   echo "root:123456" | chpasswd
+&& sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config \
+&& mkdir -p /root/.ssh && chmod 700 /root/.ssh/ \
+&& ssh-keygen -A \
+&& echo "root:123456" | chpasswd
 
 # 执行ssh启动命令
 CMD ["/etc/services.d/startup.sh", "-d"]
